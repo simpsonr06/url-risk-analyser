@@ -1,0 +1,31 @@
+services:
+  url-risk-analyser:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: url-risk-analyser
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV=production
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DATABASE_PATH=/app/data/phishing_platform.db
+      - RDAP_BASE_URL=https://rdap.org/domain/
+      - RDAP_TIMEOUT_SECONDS=4.0
+      - ALLOWED_ORIGINS=*
+      - RATE_LIMIT_ENABLED=true
+      - RATE_LIMIT_PER_MINUTE=60
+    volumes:
+      - phish_data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/health\")' || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  phish_data:
+    driver: local
