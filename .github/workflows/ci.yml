@@ -33,4 +33,4 @@ jobs:
           RATE_LIMIT_ENABLED: "true"
           RATE_LIMIT_PER_MINUTE: "10"
         run: |
-          pytest -v --tb=short
+          python -m pytest -v --tb=short
